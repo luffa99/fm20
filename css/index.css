@@ -1,0 +1,12 @@
+.bilancio {
+    font-size: 1.5em;
+}
+.red {
+    color: red;
+}
+
+@media (max-width: 400px) {
+  thead {
+    display: none;
+  }
+}

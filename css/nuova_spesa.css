@@ -1,0 +1,38 @@
+#tecnico_1 {width: 100%;}
+
+input[type="text"],input[type="tel"],input[type="number"],input[type="email"],input[type="date"] {width: 100%;}
+input[type="time"], input[type="date"], input[type="datetime-local"] {
+    height: 38px;
+    padding: 6px 10px;
+    background-color: #fff;
+    border: 1px solid #D1D1D1;
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+input[type="datetime-local"],input[type="password"] {
+    width: 100%;
+}
+input[readonly]{
+    background-color: #e8e8e8;
+}
+.spese {
+  margin-bottom: 0px;
+}
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+.corretto {
+  background-color: #00cc08;
+}
+.sbagliato {
+  background-color: #cc0000;
+}
+.piccolo {
+  background-color: #f39503;
+}
