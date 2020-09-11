@@ -1,5 +1,6 @@
 # fm20
 Flat Management '20
+Sistema web di gestione delle spese condivise (bilancio relativo). Utile per gestire il conto all'interno di appartamenti, viaggi e altro in un gruppo di amici, conoscenti, parenti.
 
 Istruzioni:
 1) Creare le tabelle utilizzando database.sql
