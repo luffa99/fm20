@@ -45,7 +45,7 @@ require ("x_session.php");
   <div class="container">
     <div class="row">
       <div style="margin-top: 10%">
-        <h2>Giretto in Europa 2019</h2>
+        <h2>Flat Management 2020</h2>
         <p>Login come: <?echo $x_nu;?></p></div>
     </div>
      <!--div id="chart_div"></div-->
