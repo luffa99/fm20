@@ -44,7 +44,9 @@ $sql = "SELECT * FROM spesa WHERE id_spesa = $id_spesa";
            $id_pagante        = $riga['id_utente_pagante'];
            $utente_inserimento= chi($riga['id_utente_inserimento']);
            $timestamp_ins     = $riga['timestamp_inserimento'];   
-          
+           if ($riga['luogo']) {
+            $luogo = "<i class='fas fa-map-marker-alt'></i> $luogo<br />";
+           }
         }
       } else {
         echo "ERRORE!";
@@ -90,14 +92,16 @@ $sql = "SELECT * FROM spesa WHERE id_spesa = $id_spesa";
 <body>
   <div class="container">
     <?php
-    echo "<h2>$nome</h2>
+    echo "
+          <a href='spese.php'><img src='images/left.png' style='height: 25px;width: 25px;margin-right: 20px;'></a> 
+          <h2 style='text-align:left;display: inline-block'>$nome</h2>
           <div class='row'>
             $descrizione
             <h3 style='margin-bottom: 0px;text-align:center;margin-top:1em;'>$spesa_totale_chf CHF</h3>
             <h5 style='text-align:center'>$spesa_totale $valuta</h5>
           
             <i class='far fa-clock'></i> $dataora<br />
-            <i class='fas fa-map-marker-alt'></i> $luogo<br />
+            $luogo
             <i class='fas fa-money-check'></i> $utente_pagante<br />
             <i class='fas fa-coins'></i> 1 $valuta = $cambio CHF<br />
             <i class='fas fa-fingerprint'></i> $id_spesa<br />

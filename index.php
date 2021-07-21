@@ -112,7 +112,7 @@ require ("x_session.php");
     </div>
     
     <div class="row" style="margin-top: 1em;">
-        <h6>developed by Lucas Falardi -.- 2019</h6>
+        <h6>developed by Lucas Falardi | 2019-2021</h6>
     </div>
   </div>
 

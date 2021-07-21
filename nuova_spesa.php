@@ -36,7 +36,7 @@ if ($mysqli->connect_errno) {
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script-->  
   <!--script src="js/hnl.mobileConsole.js"></script-->
-  <script src="js/nuova_spesa.js?1130"></script>
+
 	
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -47,14 +47,24 @@ if ($mysqli->connect_errno) {
 
   <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div id="overlay" onclick="off()">
+    <div id="reader"></div>
+  </div>
+
   <div class="container">
     <div class="row">
       <div style="margin-top: 10%">
-        <!--h2>Gestione Eventi Oratorio Balerna</h2-->
-        <h3>Aggiungi spesa</h3>
+        <a href='index.php'><img src='images/left.png' style='height: 25px;width: 25px;margin-right: 20px;'></a> 
+        <h3 style='text-align:left;display: inline-block'>Aggiungi spesa</h3>
         <hr style ="margin-top: -2rem;">
       </div>
     </div>
+
+      <a class="button" href="#" onclick="on()"> 
+          <img src="images/qrcode-solid.svg" width="15" height="15" style="vertical-align: sub;"/> 
+          QR-SCAN SCONTRINO MIGROS
+      </a>
       
       <form action="x_nuova_spesa.php" method="POST">
         
@@ -97,11 +107,21 @@ if ($mysqli->connect_errno) {
           <div class="four columns">     
               <label for="valuta">Valuta</label>
               <select class="u-full-width" id="valuta" name="valuta">
-                <option value="CHF">CHF - Franco Svizzero</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="PLN">PLN - Złoty polacco</option>
-                <option value="HUF">HUF - Fiorino ungherese</option>
-                <option value="CZK">CZK  - Corona ceca</option>
+                <option id="cur_CHF" value="CHF" rate="1.00">CHF - Franco Svizzero</option>
+                <!--option value="EUR" disabled>EUR - Euro</option>
+                <option value="PLN" disabled>PLN - Złoty polacco</option>
+                <option value="HUF" disabled>HUF - Fiorino ungherese</option>
+                <option value="CZK" disabled>CZK  - Corona ceca</option-->
+                <?php $url = "https://www.backend-rates.ezv.admin.ch/api/xmldaily?locale=en";
+                  $xml = simplexml_load_file($url);
+
+                  foreach ($xml->devise as $curr) {
+                      $curr_nome = $curr->land_it[0];
+                      $curr_rate = 1.0/$curr->kurs[0];
+                      $curr_code = strtoupper($curr->attributes()["code"][0]);
+                      echo "<option id=\"cur_$curr_code\"value=\"$curr_code\" rate=\"$curr_rate\">$curr_code - $curr_nome</option>";
+                  } 
+                ?>
               </select>
           </div>
         </div>
@@ -145,8 +165,8 @@ if ($mysqli->connect_errno) {
           <div class="four columns">  
             <label for="romana">Opzioni</label>
             <a class="button" id="romana" onclick="romana();">Alla romana</a>
-			  <a class="button" id="romana" onclick="romana_sei();">A SEI</a>
-			  <a class="button" id="romana" onclick="romana_cinque();">A CINQUE</a>
+			  <!--a class="button" id="romana" onclick="romana_sei();">A SEI</a>
+			  <a class="button" id="romana" onclick="romana_cinque();">A CINQUE</a-->
             <a class="button" id="azzera" onclick="azzera();">Azzera</a>
           </div>
         </div>
@@ -195,3 +215,8 @@ if ($mysqli->connect_errno) {
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>
+
+<script src="js/nuova_spesa.js?1130"></script>
+<script src="https://unpkg.com/html5-qrcode@2.0.11/dist/html5-qrcode.min.js"></script>
+<script src="js/qrscan.js?1001"></script>
+<script src="js/geo.js"></script>

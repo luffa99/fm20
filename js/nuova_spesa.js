@@ -14,54 +14,48 @@ window.onload = function () {
     
   document.getElementById("dataora").defaultValue = dataora;
   
-  var veradata = new Date(dataora);
-  var euro  = new Date('2019-07-29T11:00');  // Strasburgo EUR
-  var polo  = new Date('2019-08-08T19:00');  // Poznan PLN  
-  var ungh  = new Date('2019-08-13T08:00');  // Budapest HUF  
-  var prag  = new Date('2019-08-16T08:00');  // Praga CZK 
-  var nori  = new Date('2019-08-18T13:00');  // Norimberga EUR  
-  var zuri  = new Date('2019-08-19T20:00');  // Zurigo CHF
-  
-  if (veradata > zuri) {document.getElementById("valuta").value = "CHF";}
-  else if (veradata > nori) {document.getElementById("valuta").value = "EUR";}
-  else if (veradata > prag) {document.getElementById("valuta").value = "CZK";}
-  else if (veradata > ungh) {document.getElementById("valuta").value = "HUF";}
-  else if (veradata > polo) {document.getElementById("valuta").value = "PLN";}
-  else if (veradata > euro) {document.getElementById("valuta").value = "EUR";}
-  else {document.getElementById("valuta").value = "CHF";}
-  
   var c_CHF = 1;
   var c_EUR = 0;
   var c_CZK = 0;
   var c_HUF = 0;
   var c_PLN = 0;
+
+  // parser = new DOMParser();
+  // xmlDoc = parser;
   
-  var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        var myObj = JSON.parse(this.responseText);
-        c_EUR = 1/(myObj.rates.EUR);
-        c_CZK = 1/(myObj.rates.CZK);
-        c_HUF = 1/(myObj.rates.HUF);
-        c_PLN = 1/(myObj.rates.PLN);
-      }
-    };
-    xmlhttp.open("GET", "https://api.exchangeratesapi.io/latest?base=CHF", true);
-    xmlhttp.send();
+  // var xmlhttp = new XMLHttpRequest();
+  //   xmlhttp.onreadystatechange = function() {
+  //     if (this.readyState == 4 && this.status == 200) {
+  //       xmlDoc = parser.parseFromString(this.responseText,"text/xml");
+
+  //       alert(xmlDoc.getElementsByTagName("device")[0].childNodes[0].nodeValue);
+
+  //       c_EUR = 1/(myObj.rates.EUR);
+  //       c_CZK = 1/(myObj.rates.CZK);
+  //       c_HUF = 1/(myObj.rates.HUF);
+  //       c_PLN = 1/(myObj.rates.PLN);
+  //     }
+  //   };
+  //   xmlhttp.open("GET", "https://www.backend-rates.ezv.admin.ch/api/xmldaily?locale=en", true);
+  //   xmlhttp.send();
     
   document.getElementById("spesa_totale").oninput = function(){ 
-    var valuta_locale = document.getElementById("valuta").value;
-    var nome_cambio = 'c_'+valuta_locale;
-    var cambio = eval(nome_cambio);
+    // var valuta_locale = document.getElementById("valuta").value;
+    // var nome_cambio = 'c_'+valuta_locale;
+    // var cambio = eval(nome_cambio);
+    var valuta = document.getElementById("valuta").value;
+    var cambio = parseFloat(document.getElementById("cur_"+valuta).getAttribute("rate"));
     var valore_totale = document.getElementById("spesa_totale").value;
     document.getElementById("spesa_totale_chf").value = (cambio*valore_totale).toFixed(2);
     document.getElementById("cambio").value = cambio.toFixed(10);
     conti();
   }
   document.getElementById("valuta").oninput = function(){ 
-    var valuta_locale = document.getElementById("valuta").value;
-    var nome_cambio = 'c_'+valuta_locale;
-    var cambio = eval(nome_cambio);
+    // var valuta_locale = document.getElementById("valuta").value;
+    // var nome_cambio = 'c_'+valuta_locale;
+    // var cambio = eval(nome_cambio);
+    var valuta = document.getElementById("valuta").value;
+    var cambio = parseFloat(document.getElementById("cur_"+valuta).getAttribute("rate"));
     var valore_totale = document.getElementById("spesa_totale").value;
     document.getElementById("spesa_totale_chf").value = (cambio*valore_totale).toFixed(2);
     document.getElementById("cambio").value = cambio.toFixed(10);

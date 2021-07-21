@@ -44,6 +44,8 @@ require ("x_session.php");
   <div class="container">
     <div class="row">
       <div style="margin-top: 10%">
+        <a href='index.php'><img src='images/left.png' style='height: 25px;width: 25px;margin-right: 20px;'></a> 
+        <h3 style='text-align:left;display: inline-block'>Cambia Password</h3>
         <p>Login come: <?echo $x_nu;?></p></div>
     </div>
     

@@ -46,7 +46,7 @@ function chi($id_utenti){
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
-  <link rel="stylesheet" href="css/bilancio.css">
+  <link rel="stylesheet" href="css/bilancio.css?v=1001">
 
   
   <!-- Javascript
@@ -62,10 +62,26 @@ function chi($id_utenti){
 </head>
 <body>
   <div class="container">
-    <h2>Mio Bilancio</h2>
+    <a href='index.php'><img src='images/left.png' style='height: 25px;width: 25px;margin-right: 20px;'></a> 
+    <h2 style='text-align:left;display: inline-block'>Mio bilancio</h2>
     <h6>Bilancio di: <?php echo $x_nu; ?> </h6>
     <div class="centro">
     <?php  
+
+        $sql = "SELECT SUM(`debito_chf`) as totspesamensile FROM `soldi` \n"
+        . "JOIN spesa USING(`id_spesa`)\n"
+        . "WHERE `id_utente` = $x_id AND\n"
+        . "EXTRACT(MONTH FROM `dataora`) = EXTRACT(MONTH FROM CURRENT_TIMESTAMP)";
+        $result = $mysqli->query($sql);
+        $totalespesamensile = round(0.00,2);
+        if ($result->num_rows == 1) {
+          while($riga = $result->fetch_assoc()) {
+            $totspesamensile = round($riga['totspesamensile'],2);
+          }
+        } else {
+          $totalespesamensile = round(0.00,2);
+        } 
+
         $sql = "SELECT * FROM utenti WHERE id_utenti = $x_id";
         $result = $mysqli->query($sql);
         if ($result->num_rows == 1) {
@@ -81,14 +97,14 @@ function chi($id_utenti){
                 $credito_chf = $credito_chf + $riga_2['credito_chf'];
               } 
             }
-            $bilancio = $credito_chf - $debito_chf;
+            $bilancio = round($credito_chf - $debito_chf, 2);
           }
         } else {
           echo "ERRORE!";
         }
         if ($bilancio < 0) {$stile = "bilancio red";} else {$stile = "bilancio";}
         echo "<h2 class='$stile'>$bilancio <span class='valuta_1'>CHF</span></h2>";
-		echo "<h4 class='totale'>in totale: $debito_chf <span class='valuta_1'>CHF</span></h4>";
+		echo "<h4 class='totale'>Questo mese: $totspesamensile <span class='valuta_1'>CHF</span></h4>";
     ?>
       
     </div>
@@ -96,7 +112,25 @@ function chi($id_utenti){
     </div>
   </div>   
       <?php     
-      $sql = "SELECT * FROM soldi WHERE id_utente = $x_id ORDER by id_spesa DESC";
+      if (isset($_GET['page_no']) && $_GET['page_no']!="") {
+        $page_no = $_GET['page_no'];
+      } else {
+        $page_no = 1;
+      }
+      $total_records_per_page = 10;
+      $offset = ($page_no-1) * $total_records_per_page;
+      $previous_page = $page_no - 1;
+      $next_page = $page_no + 1;
+      $adjacents = "2";
+      $result_count = mysqli_query(
+        $mysqli, "SELECT COUNT(*) AS total_records FROM soldi WHERE id_utente = $x_id"
+      );
+      $total_records = mysqli_fetch_array($result_count);
+      $total_records = $total_records['total_records'];
+      $total_no_of_pages = ceil($total_records / $total_records_per_page);
+      $second_last = $total_no_of_pages - 1; // total pages minus 1
+
+      $sql = "SELECT * FROM soldi WHERE id_utente = $x_id ORDER by id_spesa DESC LIMIT $offset, $total_records_per_page";
       $result = $mysqli->query($sql);
       if ($result->num_rows > 0) {
         while($riga = $result->fetch_assoc()) {
@@ -115,13 +149,16 @@ function chi($id_utenti){
                  $date = date_create($riga_1['dataora']);
                  $dataora = date_format($date, 'l d.m.y H:i');
                  $luogo = $riga_1['luogo'];
+                 if ($riga_1['luogo']) {
+                   $luogo = "<i class='fas fa-map-marker-alt'></i> $luogo<br />";
+                 }
                  
                  if ($debito_chf != 0) {
                  echo "<a href='dettaglio_spesa.php?id=$id_spesa' class='spesa'><div class='spesa'><div class='interno'>
                       <div class='prezzo'>- $debito_chf <span class='valuta_1'>CHF</span></div>
                       $nome<br />
                       <i class='far fa-clock'></i> $dataora<br />
-                      <i class='fas fa-map-marker-alt'></i> $luogo<br />
+                      $luogo
                       </div></div></a>";
                   }
                       
@@ -130,7 +167,7 @@ function chi($id_utenti){
                       <div class='prezzo guadagno'>+ $credito_chf <span class='valuta_1'>CHF</span></div>
                       $nome<br />
                       <i class='far fa-clock'></i> $dataora<br />
-                      <i class='fas fa-map-marker-alt'></i> $luogo<br />
+                      $luogo
                       </div></div></a>";
                   }
                }
@@ -141,6 +178,25 @@ function chi($id_utenti){
       echo "ERRORE!";
       }
       ?>
+
+<div style='padding: 10px 20px 0px; border-top: dotted 1px #CCC;text-align: center;'>
+  <strong>Pagina <?php echo $page_no." di ".$total_no_of_pages; ?></strong>
+</div>
+
+<div class="pagination">
+	<?php // if($page_no > 1){ echo "<span><a href='?page_no=1'>First Page</a></span>"; } ?>
+    
+	<span <?php if($page_no <= 1){ echo "class='disabled'"; } ?>>
+	<a <?php if($page_no > 1){ echo "href='?page_no=$previous_page'"; } ?>>Indietro</a>
+	</span>
+    
+	<span <?php if($page_no >= $total_no_of_pages){ echo "class='disabled'"; } ?>>
+	<a <?php if($page_no < $total_no_of_pages) { echo "href='?page_no=$next_page'"; } ?>>Avanti</a>
+	</span>
+    <?php if($page_no < $total_no_of_pages){
+		echo "<span><a href='?page_no=$total_no_of_pages'>Ultima &rsaquo;&rsaquo;</a></span>";
+		} ?>
+</div>
     
 
 <!-- End Document
